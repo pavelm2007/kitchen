@@ -1,0 +1,33 @@
+{% if is_paginated %}
+<div class="pagination">
+    <ul class="pagination">
+    {% if page_obj.has_previous %}
+        <li class="previous-off"><a href="?page={{ page_obj.previous_page_number }}{{ getvars }}{{ hashtag }}">&lsaquo;&lsaquo;</a></li>
+{#        <a href="?page={{ page_obj.previous_page_number }}{{ getvars }}{{ hashtag }}" class="prev">&lsaquo;&lsaquo; {% trans "previous" %}</a>#}
+    {% else %}
+
+    {% endif %}
+        {% for page in pages %}
+            {% if page %}
+                {% ifequal page page_obj.number %}
+                    <li class="active"><a href="#">{{ page }}</a></li>
+                {% else %}
+                    <li><a href="{{ request.path }}?page={{ page }}{{ getvars }}" class="page">{{ page }}</a></li>
+                {% endifequal %}
+            {% else %}
+                <li><a href="#" class="page">...</a></li>
+            {% endif %}
+        {% endfor %}
+    {% if page_obj.has_next %}
+        <li class="next"><a href="?page={{ page_obj.next_page_number }}{{ getvars }}{{ hashtag }}">&rsaquo;&rsaquo;</a></li>
+    {% else %}
+    {% endif %}
+{#        <li class="previous-off"><a href=""><<</a></li>#}
+{#        <li><a href="">1</a></li>#}
+{#        <li class="active"><a href="">2</a></li>#}
+{#        <li><a href="">3</a></li>#}
+{#        <li><a href="">4</a></li>#}
+{#        <li class="next"><a href="">>></a></li>#}
+    </ul>
+</div>
+{% endif %}

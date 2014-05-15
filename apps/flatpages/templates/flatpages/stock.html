@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load flatpages %}
+{% block title %}
+    {{ flatpage.title }} /{{ block.super }}
+{% endblock %}
+
+{% block description %}
+    {{ flatpage.meta_description }},{{ block.super }}
+{% endblock %}
+
+{% block aside %}
+    <ul class="nav nav-list">
+        {% get_flatpages '/stock/' as service_page %}
+        {% for page in service_page %}
+            <li><a href="{{ page.get_absolute_url }}"><i class="icon-chevron-right"></i>{{ page.title }}</a></li>
+        {% endfor %}
+    </ul>
+    {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    {{ block.super }}
+    {{ flatpage.content|safe }}
+
+{% endblock content %}

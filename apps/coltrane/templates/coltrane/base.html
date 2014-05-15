@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Новости/{{ block.super }}
+{% endblock %}
+
+{% block main_header %}
+
+{% endblock %}
+
+{% block breadcrumb %}
+    <div id="breadcrumb">
+                <div class="container">
+                    <div class="row">
+                        <div class="span8">
+                            <h1>
+                                    <a href="{% url 'entry_list' %}">Новости</a>
+                            </h1>
+
+                            <small>
+                                {% if current_category %}
+                                    {{ current_category.description|safe|truncatechars:64 }}
+                                {% endif %}
+                            </small>
+                        </div>
+                        <div class="span4">
+                            <div class="pull-right">
+                                <ul class="breadcrumb">
+                                    <li><a href="{% url 'entry_list' %}"><i class="icon-white icon-home"></i></a> </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+{% endblock %}

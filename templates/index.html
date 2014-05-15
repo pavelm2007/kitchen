@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% load common_tags %}
+{% load thumbnail %}
+{% load flatpages %}
+{% load catalog_tags %}
+{% load coltrane_tags %}
+{% load stock_discount_tags %}
+{% load mptt_tags %}
+{% load flatcontent_tags %}
+
+
+{% block description %}{% endblock %}
+
+{% block extra_css %}{% endblock extra_css %}
+
+{% block slider %}
+{% main_slider 'index' as main_page %}
+{% if main_page %}
+    <div class="slider-main">
+        {% get_slider_images 5 as slider_list %}
+        <div id="Carousel" class="carousel slide">
+            <ol class="carousel-indicators">
+                {% for slider in slider_list %}
+                    <li data-target="#Carousel" data-slide-to="{{ forloop.counter0 }}"
+                        {% if forloop.first %}class="active"{% endif %}></li>
+                {% endfor %}
+            </ol>
+            <!-- Carousel items -->
+            <div class="carousel-inner">
+                {% for slider in slider_list %}
+                    <div class="{% if forloop.first %}active{% endif %} item">
+                        {% if slider.title or slider.description %}
+                            <div class="carousel-caption">
+                                <h4>{{ slider.title }}</h4>
+                                {{ slider.description|safe }}
+                            </div>
+                        {% endif %}
+                        {% thumbnail slider.image "1060x350" as im %}
+                            <img src="{{ im.url }}" alt="{{ slider.title }}">
+                        {% endthumbnail %}
+
+                    </div>
+                {% endfor %}
+            </div>
+            <!-- Carousel nav -->
+            <a class="carousel-control left" href="#Carousel" data-slide="prev">&lsaquo;</a>
+            <a class="carousel-control right" href="#Carousel" data-slide="next">&rsaquo;</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="span12">
+            {% main_slider 'index' as main %}
+            {% flatcontent main_page as main_page %}
+            {{ main_page|safe }}
+        </div>
+    </div>
+
+{% else %}
+{% endif %}
+
+
+    <div class="works">
+        <div class="works-wrapper">
+            <div class="container">
+                <div class="row">
+                    <div class="span12">
+                        <h4>Наши работы</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="works-inner">
+            {% get_works_category as category_works %}
+            {#------------------------------------------------------------------#}
+            <div class="slider-works">
+                <div class="container">
+                    <div class="row">
+                        <div class="carousel jcarousel span12" id="works-carousel">
+                            <div class="carousel-inner">
+                                <div class="item active">
+                                    <div class="row">
+                                        {% for object in category_works %}
+                                            <div class="span4">
+                                                <div class="catalog-item-img">
+                                                    <a href="{{ object.get_absolute_url }}">
+                                                        {% if object.image %}
+                                                            {% thumbnail object.image "300x300" crop="center" as im %}
+                                                                <img src="{{ im.url }}"
+                                                                     alt="{{ object.name }}">
+                                                            {% endthumbnail %}
+                                                        {% else %}
+                                                            <img
+                                                                    src="{{ STATIC_URL }}js/lib/holder.js/300x300/auto"
+                                                                    alt="{{ object.name }}">
+                                                        {% endif %}
+                                                    </a>
+                                                </div>
+                                                <div class="catalog-item-title">
+                                                    <div class="catalog-item-link">
+                                                        <a href="{{ object.get_absolute_url }}">{{ object.name }}({{ object.items_count }})</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <a data-slide="prev" href="#works-carousel" class="left carousel-control">‹</a>
+                            <a data-slide="next" href="#works-carousel" class="right carousel-control">›</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {#------------------------------------------------------------------#}
+            {#------------------------------------------------------------------#}
+            {#------------------------------------------------------------------#}
+
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="span12">
+                <div class="order-block clearfix">
+                    <div class="left">
+                        <h2>Магазин корпусной мебели на заказ "ЯНА" рад приветствовать Вас на нашем сайте.</h2>
+
+                        <div class="order-text">
+                            Вы можете вызвать мастера на замер мебели или задать вопрос воспользовавшись формой для
+                            составления заявки, а так же узнать о примерной стоимости заказа самостоятельно.
+                        </div>
+
+                    </div>
+                    <div class="right center">
+                        {#                                <a class="btn btn-inverse" href="#">PURCHASE NOW</a>#}
+                        {#-----------------------------------------------modal win -----------------------------------------------#}
+                        <a class="btn btn-primary btn-inverse" data-toggle="modal" href="#ServiceModal">Заказ
+                            мастера</a>
+
+                        <div class="modal hide" id="ServiceModal">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">x</button>
+                                <h3>Вызвать замерщика</h3>
+                            </div>
+                            <div class="modal-body">
+                                <form method="post" action="{% url 'order_feedback' %}" name="order_form"
+                                      id="id_order_form">
+                                    {% csrf_token %}
+                                    <label>{{ order_feedback_form.name.label }}</label>
+                                    <p>{{ order_feedback_form.name }}{{ order_feedback_form.name.errors }}</p>
+                                    <label>{{ order_feedback_form.contact.label }}</label>
+                                    <p>{{ order_feedback_form.contact }}{{ order_feedback_form.contact.errors }}</p>
+                                    <label>Сообщение</label>
+                                    <p>{{ order_feedback_form.message }}{{ order_feedback_form.message.errors }}</p>
+
+                                    <p class="pagination pagination-center">
+                                        <button type="submit" class="btn btn-primary">Отправить заявку</button>
+                                    </p>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                После отправки сообщения мастер перезвонит на Ваш номер телефона.
+                                {#                            <a href="#" class="btn btn-primary">Register</a>#}
+                            </div>
+                        </div>
+                        {#-----------------------------------------------modal win -----------------------------------------------#}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+   {{ block.super }}
+    <script src="{{ STATIC_URL }}js/main_page.js"></script>
+{% endblock extra_js %}
+

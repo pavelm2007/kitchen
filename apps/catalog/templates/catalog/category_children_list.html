@@ -1,0 +1,46 @@
+{% extends 'catalog/base.html' %}
+{% load thumbnail %}
+{% load pagination_tags %}
+{% block content %}
+
+        {% autopaginate object_list 10 %}
+    <div class="row">
+        {% if object_list %}
+            {% for object in object_list %}
+                <div class="span3 catalog-item">
+                    <div class="catalog-item-img">
+                        <a href="{{ object.get_absolute_url }}">
+                            {% if object.image %}
+                                {% thumbnail object.image "260x260" crop="center" as im %}
+                                    <img src="{{ im.url }}"
+                                         alt="{{ object.name }}">
+                                {% endthumbnail %}
+                            {% else %}
+                                <img
+                                        src="{{ STATIC_URL }}js/lib/holder.js/260x260/auto"
+                                        alt="{{ object.name }}">
+                            {% endif %}
+                        </a>
+                    </div>
+                    <div class="catalog-item-title">
+                        <div class="catalog-item-link">
+                        <a href="{{ object.get_absolute_url }}">{{ object.name }}</a>
+                        </div>
+                    </div>
+                </div>
+                {% if forloop.counter|divisibleby:'2' %}
+                    <div class="span7 divider-catalog"></div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <div class="span7">
+                <div class="order-block clearfix">
+                    <h2>По Вашему запросу данных не получено.</h2>
+                </div>
+            </div>
+        {% endif %}
+
+    </div>
+    {% paginate %}
+
+{% endblock %}

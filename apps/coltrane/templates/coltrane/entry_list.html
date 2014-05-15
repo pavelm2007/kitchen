@@ -1,0 +1,30 @@
+{% extends 'coltrane/base.html' %}
+
+{% load thumbnail %}
+{% load pagination_ttags %}
+
+{% block content %}
+    {% for object in object_list %}
+        <div class="article">
+            {% if object.image %}
+                <div class="thumbnails image">
+                    {% thumbnail object.image "700x242" crop='center' upscale='True' as im %}
+                        <img src="{{ im.url }}">
+                    {% endthumbnail %}
+                </div>
+            {% endif %}
+
+            <div class="date">
+                {{ object.pub_date|date:'d b' }}
+            </div>
+                <h3><a href="{{ object.get_absolute_url }}">{{ object.title|capfirst }}</a></h3>
+            {{ object.short_text|safe }} <a href="{{ object.get_absolute_url }}">Подробнее</a>
+
+
+        </div>
+        <div class="divider-list"></div>
+    {% endfor %}
+
+
+    {% show_pagination %}
+{% endblock %}

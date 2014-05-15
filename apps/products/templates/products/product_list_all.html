@@ -1,0 +1,57 @@
+{% extends 'products/base.html' %}
+{% load thumbnail %}
+{% load mptt_tags %}
+
+
+
+{% block content %}
+    {% for object in object_list %}
+        <div class="row">
+            <div class="span9">
+                <h4><a href="{{ object.get_absolute_url }}">{{ object.name }}</a></h4>
+                {{ object.description|safe }}
+            </div>
+        </div>
+        {% if object.get_children %}
+            <div class="row">
+                <div class="span9">
+                    {% for product in object.get_children %}
+                        <div class="row thumbnails">
+                            <div class="span3">
+                                {% if product.image %}
+                                    {% thumbnail product.image "260x180" crop="center" as im %}
+                                        <img class="thumbnail" src="{{ im.url }}"
+                                             alt="{{ product.name }}">
+                                    {% endthumbnail %}
+                                {% else %}
+                                    <img class="thumbnail"
+                                         src="{{ STATIC_URL }}js/lib/holder.js/260x180/auto"
+                                         alt="{{ product.name }}">
+                                {% endif %}
+                            </div>
+                            <div class="span6">
+                                <h4><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h4>
+
+                                <p>{{ product.description|safe|truncatechars:150 }}</p>
+
+                                <p>
+                                    <a href="{{ product.get_absolute_url }}"
+                                       class="btn btn-primary">Подробнее</a>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="divider-list"></div>
+                    {% endfor %}
+                </div>
+
+            </div>
+        {% endif %}
+        <div class="row">
+            <div class="span9">
+                <a class="pagination-right" href="{{ object.get_absolute_url }}">Подробнее - "{{ object.name }}"</a>
+            </div>
+        </div>
+    {% endfor %}
+
+{% endblock %}
+

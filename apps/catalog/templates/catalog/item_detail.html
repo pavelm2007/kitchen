@@ -1,0 +1,72 @@
+{% extends 'catalog/base.html' %}
+
+{% load thumbnail %}
+
+{% block extra_css %}
+    <link href="{{ STATIC_URL }}css/colorbox/colorbox.css" rel="stylesheet">
+{% endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/jquery.colorbox-min.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery.colorbox-ru.js"></script>
+    <script>
+        $(document).ready(function () {
+{#            $("a.group").colorbox();#}
+            $("a.group").colorbox({rel: 'group'});
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="span7">
+            <h4><a href="{{ object.get_absolute_url }}">{{ object.name }}</a></h4>
+
+            <div class="row">
+                <div class="offset1 span5">
+                    {% if object.image %}
+                        {% thumbnail object.image "700" as imi %}
+                            <a href="{{ imi.url }}" class="group">
+                                {% thumbnail object.image "380" as im %}
+                                    <img class="thumbnail" src="{{ im.url }}" alt="{{ object.title }}">
+                                {% endthumbnail %}
+                            </a>
+                        {% endthumbnail %}
+                    {% else %}
+                        <img src="{{ STATIC_URL }}js/lib/holder.js/260x260/auto"
+                             alt="{{ object.title }}">
+                    {% endif %}
+                </div>
+                <div class="span7">
+                    {{ object.body|safe }}
+                    {% if object.price %}
+                        <p><strong>Цена:</strong> {{ object.price }} руб.</p>
+                    {% endif %}
+
+                </div>
+            </div>
+            {% if object.get_photos %}
+                <div class="row">
+                    <div class="divider-catalog"></div>
+                    <div class="span7">
+                        <ul class="thumbnails">
+                            {% for photo in object.get_photos %}
+                                <li class="span3 catalog-item">
+                                    {% thumbnail photo.image "700" as imi %}
+                                        <a href="{{ imi.url }}" class="group">
+                                            {% thumbnail photo.image "260x260" as im %}
+                                                <img class="thumbnail"  src="{{ im.url }}" alt="{{ object.title }}">
+                                            {% endthumbnail %}
+                                        </a>
+                                    {% endthumbnail %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+{% endblock %}

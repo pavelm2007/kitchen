@@ -1,0 +1,48 @@
+{% extends 'feedback/base.html' %}
+
+{% load feedback_tags %}
+{% load pagination_tags %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="span9">
+            <h4>Отзывы</h4>
+            {% get_feedback %}
+            {% if feedback %}
+                {% autopaginate feedback 10 %}
+                {% for feedback in feedback %}
+                    <div class="row">
+                        <div class="span9 feedback">
+                            <p>{{ feedback.message }}</p>
+
+                            <p class="pagination-right">{{ feedback.time|date:'d.m.Y' }}</p>
+
+                            <p class="pagination-right"> {{ feedback.name }}</p>
+                        </div>
+                    </div>
+                    <div class="divider-list"></div>
+                {% endfor %}
+                {% paginate %}
+
+
+            {% else %}
+                <p>По вашему запросу ни чего не найдено.</p>
+            {% endif %}
+            <h3>Оставить отзыв</h3>
+
+            <div class="row">
+                <form action="{% url 'leave_feedback' %}" method="get">
+                    {% csrf_token %}
+                    <div class="span4">{{ feedback_form.name }}{{ feedback_form.name.errors }}</div>
+                    <div class="span1"></div>
+                    <div class="span4">{{ feedback_form.email }}{{ feedback_form.email.errors }}</div>
+                    <div class="span9">{{ feedback_form.message }}{{ feedback_form.message.errors }}</div>
+                    <div class="span9"><input class="btn pagination pagination-right" type="submit" value="Отправить">
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

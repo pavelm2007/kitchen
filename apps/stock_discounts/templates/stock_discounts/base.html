@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% load stock_discount_tags %}
+
+{% block breadcrumb %}
+    <div id="breadcrumb">
+                <div class="container">
+                    <div class="row">
+                        <div class="span8">
+                            <h1>
+                                {% if current_category %}
+                                    <a href="{{ current_url }}">{{ current_category }}</a>
+                                    {% else %}
+                                    <a href="{{ object.get_type_cat.current_url }}">{{ object.get_type_cat.current_category }}</a>
+                                {% endif %}
+                            </h1>
+
+                            <small>
+                                {% if current_category %}
+                                    {{ current_category.description|safe|truncatechars:64 }}
+                                {% endif %}
+                            </small>
+                        </div>
+                        <div class="span4">
+                            <div class="pull-right">
+                                <ul class="breadcrumb">
+                                    <li><a href="{% url 'stock_discount_index' %}"><i class="icon-white icon-home"></i></a> </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+{% endblock %}
+
+{% block aside %}
+    <h3><a href="{% url 'stock_discount_index' %}">Акции/Скидки</a></h3>
+    <ul class="unstyled custom-list arrows">
+        <li><a href="{% url 'stock_discount_sub_list' 1 %}">Скидки</a></li>
+        <li><a href="{% url 'stock_discount_sub_list' 2 %}">Акции</a></li>
+    </ul>
+{#    {% get_stock_category as stock_category %}#}
+{#    {% get_discount_category as discount_category %}#}
+{#    <ul class="nav nav-list">#}
+{#        {% if stock_category %}#}
+{#            <li class="nav-header"><a href="{% url 'stock_discount_sub_list' 1 %}">Скидки</a></li>#}
+{#            {% for page in stock_category %}#}
+{#                <li><a href="{{ page.get_absolute_url }}"><i class="icon-chevron-right"></i>{{ page.title }}</a></li>#}
+{#            {% endfor %}#}
+{#        {% endif %}#}
+{##}
+{#        {% if discount_category %}#}
+{#            <li class="nav-header"><a href="{% url 'stock_discount_sub_list' 2 %}">Акции</a></li>#}
+{#            {% for page in discount_category %}#}
+{#                <li><a href="{{ page.get_absolute_url }}"><i class="icon-chevron-right"></i>{{ page.title }}</a></li>#}
+{#            {% endfor %}#}
+{#        {% endif %}#}
+{##}
+{#    </ul>#}
+    {{ block.super }}
+{% endblock %}

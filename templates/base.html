@@ -1,0 +1,324 @@
+{% load staticfiles %}
+{% load common_tags %}
+{% load thumbnail %}
+{% load flatpages %}
+{% load catalog_tags %}
+{% load coltrane_tags %}
+{% load stock_discount_tags %}
+{% load mptt_tags %}
+{% load flatcontent_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}магазин корпусной мебели на заказ "ЯНА"{% endblock title %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block description %}{% endblock %}">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    {#    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">#}
+    <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
+    {#    <style>#}
+    {#        body {#}
+    {#            padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */#}
+    {#        }#}
+    {#    </style>#}
+    {#    <link href="{% static 'css/bootstrap-responsive.min.css' %}" rel="stylesheet">#}
+    {#    <link href="{{ STATIC_URL }}css/bootstrap-responsive.min.css" rel="stylesheet">#}
+    <link href="{{ STATIC_URL }}css/superfish.css" rel="stylesheet">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- This file store project specific CSS -->
+    <link href="{{ STATIC_URL }}css/project.css" rel="stylesheet">
+
+    <!-- Use this to quickly test CSS changes in a template,
+        then move to project.css -->
+    {% block extra_css %}{% endblock extra_css %}
+</head>
+
+<body>
+<div class="wrapper">
+{% block body_head %}
+    <header>
+
+        <div class="header-top">
+            <div class="container">
+                {#            <div class="container">#}
+                <div class="row">
+                    <div class="span6">
+                        {#                        <span>Welcome Line</span>, or some text goes here#}
+                    </div>
+                    <div class="span6 text-right">
+                        {% flatcontent email as email %}
+                        {% flatcontent phone_single as phone_single %}
+                        E: <a href="#">{{ email|striptags|spacify }}</a> | Тел.: {{ phone_single|striptags|spacify }}
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                {#            </div>#}
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="span3">
+                        <div class="logo">
+                            <a href="{% url 'index' %}">
+                                <img src="{{ STATIC_URL }}img/logo.png"
+                                     alt='монтажная компания "Ваш выбор"'/>
+                                {#                                монтажная компания "Ваш выбор"#}
+                            </a>
+                        </div>
+                    </div>
+                    <div class="span9">
+                        <!-- Main Navigation -->
+                        <nav>
+                            <ul class="sf-menu" id="nav">
+                                <li {% active request index %}><a href="{% url 'index' %}">Главная</a></li>
+                                {% get_root_category as nodes %}
+                                {% for node in nodes %}
+                                    <li {% active_contain request node.slug %}>
+{#                                    <li {% active_contain request '/catalog/' %}>#}
+                                        <a href="{{ node.get_absolute_url }}">{{ node.name }}<b class="caret"></b></a>
+                                        {% if node.get_children %}
+                                            <ul>
+                                                {% for child in node.get_children %}
+                                                    <li><a href="{{ child.get_absolute_url }}">{{ child.name }}</a></li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+
+
+                                <li {% active_contain request '/service/' %}>
+                                    <a href="#">Услуги <b class="caret"></b></a>
+                                    <ul>
+                                        {% get_flatpages '/service/' as service_page %}
+                                        {% for page in service_page %}
+                                            <li><a href="{{ page.get_absolute_url }}">{{ page.title }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                                <li {% active_contain request '/feedback/' %}><a
+                                        href="{% url 'feedback_list' %}">Отзывы</a></li>
+                                <li {% active_contain request '/questions/' %}><a href="{% url 'tips_list' %}">Советы</a>
+                                </li>
+
+                                <li {% active_contain request '/contact/' %}><a href="{% url 'contact' %}">Контакты</a>
+                                </li>
+                                <div class="clearfix"></div>
+                            </ul>
+                        </nav>
+                        <!-- END Main Navigation -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+{% endblock %}
+{% main_slider 'index' as main_page %}
+
+{% block breadcrumb %}
+    {% if not main_page %}
+        <div id="breadcrumb">
+            <div class="container">
+                <div class="row">
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+{% block slider %}
+    {% if main_page %}
+        <div class="slider-main">
+            {% get_slider_images 5 as slider_list %}
+            <div id="Carousel" class="carousel slide">
+                <ol class="carousel-indicators">
+                    {% for slider in slider_list %}
+                        <li data-target="#Carousel" data-slide-to="{{ forloop.counter0 }}"
+                            {% if forloop.first %}class="active"{% endif %}></li>
+                    {% endfor %}
+                </ol>
+                <!-- Carousel items -->
+                <div class="carousel-inner">
+                    {% for slider in slider_list %}
+                        <div class="{% if forloop.first %}active{% endif %} item">
+                            {% if slider.title or slider.description %}
+                                <div class="carousel-caption">
+                                    <h4>{{ slider.title }}</h4>
+                                    {{ slider.description|safe }}
+                                </div>
+                            {% endif %}
+                            {% thumbnail slider.image "1060x350" as im %}
+                                <img src="{{ im.url }}" alt="{{ slider.title }}">
+                            {% endthumbnail %}
+
+                        </div>
+                    {% endfor %}
+                </div>
+                <!-- Carousel nav -->
+                <a class="carousel-control left" href="#Carousel" data-slide="prev">&lsaquo;</a>
+                <a class="carousel-control right" href="#Carousel" data-slide="next">&rsaquo;</a>
+            </div>
+        </div>
+        <div class="container">
+            <div class="span12">
+                {% main_slider 'index' as main %}
+                {% flatcontent main_page as main_page %}
+                {{ main_page|safe }}
+            </div>
+        </div>
+
+    {% else %}
+    {% endif %}
+{% endblock %}
+
+
+{% block page_content %}
+    <div class="container">
+        <div class="row">
+            <div class="span3 aside">
+                {% block aside %}
+                    {% if not main_page %}
+                        {#-----------------------------------------------modal win -----------------------------------------------#}
+                        <a class="btn btn-primary span2" data-toggle="modal" href="#ServiceModal">Заказ мастера</a>
+
+                        <div class="modal hide" id="ServiceModal">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">x</button>
+                                <h3>Вызвать замерщика</h3>
+                            </div>
+                            <div class="modal-body">
+                                <form method="post" action="{% url 'order_feedback' %}" name="order_form"
+                                      id="id_order_form">
+                                    {% csrf_token %}
+                                    <p>{{ order_feedback_form.name }}{{ order_feedback_form.name.errors }}</p>
+
+                                    <p>{{ order_feedback_form.contact }}{{ order_feedback_form.contact.errors }}</p>
+
+                                    <p>{{ order_feedback_form.message }}{{ order_feedback_form.message.errors }}</p>
+
+                                    <p class="pagination pagination-center">
+                                        <button type="submit" class="btn btn-primary">Отправить заявку</button>
+                                    </p>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                После отправки сообщения мастер перезвонить на Ваш номер телефона.
+                                {#                            <a href="#" class="btn btn-primary">Register</a>#}
+                            </div>
+                        </div>
+                        {#-----------------------------------------------modal win -----------------------------------------------#}
+
+                    {% endif %}
+
+                    {% get_latest_content coltrane.entry 5 as news_list %}
+                    {% if news_list %}
+                        <h3><a href="{% url 'entry_list' %}">Новости</a></h3>
+                        {% for news in news_list %}
+                            <h6>{{ news.title }}</h6>
+                            <p>{{ news.short_text|truncatechars:50 }}</p>
+                            <a href="{{ news.get_absolute_url }}">Подробнее</a>
+                        {% endfor %}
+
+                    {% endif %}
+                {% endblock %}
+            </div>
+            <div class="span9">
+                {% block content %}
+
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block footer %}
+    <div class="footer footer-top">
+        <div class="container">
+            <div class="row">
+                {% get_root_category as nodes %}
+                {% for node in nodes %}
+                    <div class="span3">
+                        <h3> {{ node.name }}</h3>
+                        {#                        <h3> <a href="{{ node.get_absolute_url }}">{{ node.name }}</a></h3>#}
+                        {% if node.get_children %}
+                            <ul class="unstyled custom-list arrows">
+                                {% for child in node.get_children %}
+                                    <li><a href="{{ child.get_absolute_url }}">{{ child.name }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+{#                <div class="span3">#}
+{#                    <h3>Услуги</h3>#}
+{#                    <ul class="unstyled custom-list arrows">#}
+{##}
+{#                        {% get_flatpages '/service/' as service_page %}#}
+{#                        {% for page in service_page %}#}
+{#                            <li><a href="{{ page.get_absolute_url }}">{{ page.title }}</a></li>#}
+{#                        {% endfor %}#}
+{#                    </ul>#}
+{#                </div>#}
+                <div class="span3">
+                    <h3>Контакты</h3>
+                    {% flatcontent address as address %}
+                    {% flatcontent phone as phone %}
+                    <address>
+                        {{ address|safe|escape }}
+                        <abbr title="Phone">Тел.:</abbr> {{ phone|safe|escape }}
+                    </address>
+
+                    <address>
+                        {% flatcontent email as email %}
+                        <a href="mailto:#">{{ email|safe|escape }}</a>
+                    </address>
+                </div>
+
+            </div>
+            <hr>
+            <div class="row-fluid">
+                <div class="span12">
+                    <p class="muted pull-right">© 2012 - {% now 'Y' %} производство мебели на заказ "ЯНА"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+</div>
+
+<p id="back-top" style="display: none;">
+    <a href="#top"><i class="icon-white icon-arrow-up"></i></a>
+</p>
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+{#<script src="http://code.jquery.com/jquery-latest.js"></script>#}
+<script type='text/javascript' src="{% static 'js/lib/jquery-1.10.2.js' %}"></script>
+<script type='text/javascript' src="{% static 'js/bootstrap.min.js' %}"></script>
+<script type='text/javascript' src="{% static 'js/lib/twitter-bootstrap-hover-dropdown.js' %}"></script>
+<script type='text/javascript' src="{% static 'js/lib/superfish.js' %}"></script>
+<script type='text/javascript' src="{{ STATIC_URL }}js/lib/jquery.form.js"></script>
+<script type='text/javascript' src="{{ STATIC_URL }}js/lib/tinynav.min.js"></script>
+<!-- place project specific Javascript in this file -->
+<script type='text/javascript' src="{% static 'js/project.js' %}"></script>
+<script type='text/javascript' src="{{ STATIC_URL }}js/order_form.js"></script>
+
+{% block extra_js %}
+    <script src="{{ STATIC_URL }}js/lib/bootstrap-carousel.js"></script>
+    <script src="{{ STATIC_URL }}js/lib/holder.js"></script>
+
+
+
+{% endblock extra_js %}
+
+</body>
+</html>

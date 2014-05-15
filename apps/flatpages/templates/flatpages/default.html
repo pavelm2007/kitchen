@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load flatpages %}
+{% load thumbnail %}
+{% block title %}
+    {{ flatpage.title }} /{{ block.super }}
+{% endblock %}
+
+{% block description %}
+    {{ flatpage.meta_description }},{{ block.super }}
+{% endblock %}
+
+{% block breadcrumb %}
+    <div id="breadcrumb">
+                <div class="container">
+                    <div class="row">
+                        <div class="span8">
+                            <h1>
+                                <a href="{{ flatpage.get_absolute_url }}">{{ flatpage.title|capfirst }}</a>
+                            </h1>
+
+                            <small>
+                            </small>
+                        </div>
+                        <div class="span4">
+                            <div class="pull-right">
+                                <ul class="breadcrumb">
+                                    <li><a href="{% url 'index' %}"><i class="icon-white icon-home"></i></a> </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+{% endblock %}
+
+
+{% block aside %}
+    <ul class="nav nav-list">
+        {% get_flatpages '/service/' as service_page %}
+        {% for page in service_page %}
+            <li><a href="{{ page.get_absolute_url }}"><i class="icon-chevron-right"></i>{{ page.title }}</a></li>
+        {% endfor %}
+    </ul>
+    {{ block.super }}
+{% endblock %}
+
+
+{% block content %}
+
+    <div class="article">
+    {{ block.super }}
+
+        {% if flatpage.image %}
+            <div class="thumbnails image">
+                {% thumbnail flatpage.image "700x242" crop='center' upscale='True' as im %}
+                    <img src="{{ im.url }}">
+                {% endthumbnail %}
+            </div>
+        {% endif %}
+
+{#        <h3><a href="{{ flatpage.get_absolute_url }}">{{ flatpage.title|capfirst }}</a></h3>#}
+        {{ flatpage.content|safe }}
+
+        {% for key, obj in flatpage.get_text %}
+            <div class="row">
+                {% ifequal key 1 %}
+                    <div class="span9">
+                        {% if obj.title %}
+                            <h4>{{ obj.title }}</h4>
+                        {% endif %}
+                        {{ obj.text|safe }}
+                    </div>
+                {% endifequal %}
+                {% ifequal key 2 %}
+                    <div class="span6">
+                        {% if obj.title %}
+                            <h4>{{ obj.title }}</h4>
+                        {% endif %}
+                        {{ obj.text|safe }}
+                    </div>
+                    <div class="span3">
+                        {% thumbnail object.image "260x180" crop="center" as im %}
+                            <img src="{{ im.url }}">
+                        {% endthumbnail %}
+                    </div>
+                {% endifequal %}
+                {% ifequal key 3 %}
+                    <div class="span3">
+                        {% thumbnail object.image "260x180" crop="center" as im %}
+                            <img src="{{ im.url }}">
+                        {% endthumbnail %}
+                    </div>
+                    <div class="span6">
+                        {% if obj.title %}
+                            <h4>{{ obj.title }}</h4>
+                        {% endif %}
+                        {{ obj.text|safe }}
+                    </div>
+                {% endifequal %}
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

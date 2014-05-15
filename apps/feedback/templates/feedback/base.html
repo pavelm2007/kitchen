@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% load flatpages %}
+
+{% block breadcrumb %}
+    <div id="breadcrumb">
+                <div class="container">
+                    <div class="row">
+                        <div class="span8">
+                            <h1>
+                                    <a href="{% url 'leave_feedback' %}">Отзывы</a>
+                            </h1>
+
+                            <small>
+                                {% if current_category %}
+                                    {{ current_category.description|safe|truncatechars:64 }}
+                                {% endif %}
+                            </small>
+                        </div>
+                        <div class="span4">
+                            <div class="pull-right">
+                                <ul class="breadcrumb">
+                                    <li><a href="{% url 'leave_feedback' %}"><i class="icon-white icon-home"></i></a> </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+{% endblock %}
+
+{% block aside %}
+
+    <ul class="nav nav-list">
+        {% get_flatpages '/service/' as service_page %}
+        {% for page in service_page %}
+            <li><a href="{{ page.get_absolute_url }}"><i class="icon-chevron-right"></i>{{ page.title }}</a></li>
+        {% endfor %}
+    </ul>
+     {{ block.super }}
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'products/base.html' %}
+{% load thumbnail %}
+{% load pagination_tags %}
+{% block content %}
+
+        <div class="row">
+            <div class="span9">
+                <h4>{{ object.name }}</h4>
+                {{ object.description|safe }}
+            </div>
+        </div>
+        {% if object.live_entry_set %}
+            <div class="row">
+            <div class="span9">
+                {% autopaginate object.live_entry_set 10 %}
+
+                <ul class="thumbnails">
+                    {% for product in object.live_entry_set %}
+                        <li class="span3">
+                            <div class="thumbnail">
+                                {% if product.main_photo %}
+                                    {% thumbnail product.main_photo.image "260x180" crop="center" as im %}
+                                        <img src="{{ im.url }}" alt="{{ product.name }}">
+                                    {% endthumbnail %}
+                                    {% else %}
+                                     <img src="{{ STATIC_URL }}js/lib/holder.js/260x180/auto" alt="{{ product.name }}">
+                                {% endif %}
+                                <div class="caption">
+                                    <h4><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h4>
+
+                                    <p>{{ product.excerpt|truncatechars:150 }}</p>
+
+                                    <p>
+                                        <a href="{{ product.get_absolute_url }}" class="btn btn-primary">Подробнее</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+
+                </ul>
+                {% paginate %}
+            </div>
+            </div>
+        {% endif %}
+
+
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'coltrane/base.html' %}
+
+{% load thumbnail %}
+{% load pagination_ttags %}
+
+{% block content %}
+
+    <div class="article">
+        {% if object.image %}
+            <div class="thumbnails image">
+                {% thumbnail object.image "700x242" crop='center' upscale='True' as im %}
+                    <img src="{{ im.url }}">
+                {% endthumbnail %}
+            </div>
+        {% endif %}
+
+        <div class="date">
+            {{ object.pub_date|date:'d b' }}
+        </div>
+        <h3><a href="{{ object.get_absolute_url }}">{{ object.title|capfirst }}</a></h3>
+        {{ object.text|safe }}
+
+        {% for key, obj in object.get_text %}
+            <div class="row">
+                {% ifequal key 1 %}
+                    <div class="span9">
+                        {% if obj.title %}
+                            <h4>{{ obj.title }}</h4>
+                        {% endif %}
+                        {{ obj.text|safe }}
+                    </div>
+                {% endifequal %}
+                {% ifequal key 2 %}
+                    <div class="span6">
+                        {% if obj.title %}
+                            <h4>{{ obj.title }}</h4>
+                        {% endif %}
+                        {{ obj.text|safe }}
+                    </div>
+                    <div class="span3">
+                        {% thumbnail object.image "260x180" crop="center" as im %}
+                            <img src="{{ im.url }}">
+                        {% endthumbnail %}
+                    </div>
+                {% endifequal %}
+                {% ifequal key 3 %}
+                    <div class="span3">
+                        {% thumbnail object.image "260x180" crop="center" as im %}
+                            <img src="{{ im.url }}">
+                        {% endthumbnail %}
+                    </div>
+                    <div class="span6">
+                        {% if obj.title %}
+                            <h4>{{ obj.title }}</h4>
+                        {% endif %}
+                        {{ obj.text|safe }}
+                    </div>
+                {% endifequal %}
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

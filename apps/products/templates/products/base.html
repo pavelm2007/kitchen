@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% load product_tags %}
+{% load mptt_tags %}
+
+{% block breadcrumb %}
+    <div id="breadcrumb">
+                <div class="container">
+                    <div class="row">
+                        <div class="span8">
+                            <h1>
+                                {% if current_category %}
+                                    <a href="{{ current_category.get_absolute_url }}">{{ current_category }}</a>
+                                    {% else %}
+                                    <a href="{% url 'product_index' %}">Материалы</a>
+
+                                {% endif %}
+                            </h1>
+
+                            <small>
+                                {% if current_category %}
+                                    {{ current_category.description|safe|truncatechars:64 }}
+                                {% endif %}
+                            </small>
+                        </div>
+                        <div class="span4">
+                            <div class="pull-right">
+                                <ul class="breadcrumb">
+                                    <li><a href="{% url 'product_index' %}"><i class="icon-white icon-home"></i></a> <span class="divider">/</span></li>
+                                    {% for node in current_category.get_ancestors %}
+                                        <li>
+                                            <a href="{{ node.get_absolute_url }}">{{ node }}</a>
+                                            {% if not forloop.last %}
+                                                <span class="divider">/</span>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+{% endblock %}
+
+{% block aside %}
+
+     <ul class="nav nav-list unstyled custom-list arrows">
+     {% get_product_category as nodes %}
+         {% recursetree nodes %}
+             <li><label class="tree-toggler nav-header"><a
+                     href="{{ node.get_absolute_url }}">{{ node.name }}</a></label>
+                 <ul class="nav nav-list tree unstyled custom-list arrows">
+                     {% for child in node.get_children %}
+                         <li><a href="{{ child.get_absolute_url }}">{{ child.name }}</a></li>
+                     {% endfor %}
+                 </ul>
+             </li>
+         {% endrecursetree %}
+
+        </ul>
+
+    {{ block.super }}
+{% endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+    <script>
+    $(document).ready(function () {
+        $('label.tree-toggler').click(function (e) {
+
+            $(this).parent().children('ul.tree').toggle(300);
+            e.preventDefault();
+        });
+    });
+</script>
+    <script src="{{ STATIC_URL }}js/lib/holder.js"></script>
+{% endblock %}

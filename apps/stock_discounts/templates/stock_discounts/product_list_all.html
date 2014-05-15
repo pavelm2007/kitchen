@@ -1,0 +1,42 @@
+{% extends 'stock_discounts/base.html' %}
+{% load thumbnail %}
+{% block content %}
+   {% for object in object_list %}
+        <div class="row">
+            <div class="span9">
+                <h4>{{ object.title }}</h4>
+                {{ object.description|safe }}
+            </div>
+        </div>
+        {% if object.live_entry_set %}
+            <div class="row">
+                 <ul class="thumbnails">
+                    {% for product in object.live_entry_set %}
+                        <li class="span3">
+                            <div class="thumbnail">
+                                {% if product.main_photo %}
+                                    {% thumbnail product.main_photo.image "260x180" crop="center" as im %}
+                                        <img src="{{ im.url }}" alt="{{ product.title }}">
+                                    {% endthumbnail %}
+                                {% endif %}
+                                <div class="caption">
+                                    <h4>{{ product.title }}</h4>
+                                    <p>{{ product.excerpt|truncatechars:150 }}</p>
+                                    <p>
+                                        <a href="{{ product.get_absolute_url }}" class="btn btn-primary">Подробнее</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        <div class="row">
+            <div class="span9">
+                <a class="pagination-right" href="{{ object.get_absolute_url }}">Подробнее - "{{ object.title }}"</a>
+            </div>
+        </div>
+    {% endfor %}
+
+{% endblock %}

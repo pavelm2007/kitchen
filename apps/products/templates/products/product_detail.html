@@ -1,0 +1,52 @@
+{% extends 'products/base.html' %}
+
+{% load thumbnail %}
+{% block content %}
+
+    <div class="row">
+        <div class="span9">
+            <h4><a href="{{ object.get_absolute_url }}">{{ object.name }}</a></h4>
+
+            <div class="row">
+                <div class="span3">
+                    {% if object.image %}
+                        {% thumbnail object.image "260x180" crop="center" as im %}
+                            <img class="thumbnail" src="{{ im.url }}" alt="{{ object.title }}">
+                        {% endthumbnail %}
+                    {% else %}
+                        <img src="{{ STATIC_URL }}js/lib/holder.js/260x180/auto"
+                             alt="{{ object.title }}">
+                    {% endif %}
+                </div>
+                <div class="span6">
+                    {{ object.body|safe }}
+                    {% if object.price %}
+                        <p><strong>Цена:</strong> {{ object.price }} руб.</p>
+                    {% endif %}
+
+                </div>
+            </div>
+            {% if object.get_photos %}
+                <div class="row">
+             <div class="span9">
+                <h4>Наши работы</h4>
+             </div>
+                <div class="span9">
+                    <ul class="thumbnails">
+                        {% for photo in object.get_photos %}
+                            <li class="span3">
+                                <a href="#" class="thumbnail">
+                                    {% thumbnail photo.image "260x180" crop="center" as im %}
+                                        <img src="{{ im.url }}" alt="{{ object.title }}">
+                                    {% endthumbnail %}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+{% endblock %}
